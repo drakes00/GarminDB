@@ -362,7 +362,7 @@ class SportActivities(idbutils.DbObject):
     @classmethod
     def _create_sport_view(cls, db, selectable, sport):
         """Create a database view for a sport based activity type."""
-        filter = literal_column(f'{Activities.sport} == "{sport}"')
+        filter = literal_column(f"{Activities.sport} == '{sport}'")
         cls.create_join_view(db, f'{sport}_activities_view', selectable, Activities, filter, Activities.start_time.desc())
 
     @classmethod
@@ -378,7 +378,8 @@ class SportActivities(idbutils.DbObject):
     @classmethod
     def google_map_loc(cls, label):
         """Return a literal column composed of a google map URL for either the start or stop location off the activity."""
-        return literal_column(idbutils.Location.google_maps_url_template('activities.%s_lat' % label, 'activities.%s_long' % label) + ' AS %s_loc' % label)
+        sql = idbutils.Location.google_maps_url_template('activities.%s_lat' % label, 'activities.%s_long' % label)
+        return literal_column(sql.replace('"', "'") + ' AS %s_loc' % label)
 
 
 class StepsActivities(ActivitiesDb.Base, SportActivities):

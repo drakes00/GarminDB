@@ -100,5 +100,7 @@ test/*.txt
 my-defines.mk
 pyproject.toml
 uv.lock
+HealthData
+garmin_tokens.json
 
 Jupyter/.ipynb_checkpoints/

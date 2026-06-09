@@ -229,9 +229,12 @@ class GarminJsonDetailsData(GarminJsonActivityData):
 
     def _process_steps_activity(self, sub_sport, activity_id, json_data):
         summary_dto = json_data['summaryDTO']
-        avg_speed = fitfile.conversions.mps_to_mph(summary_dto.get('averageSpeed'))
-        avg_moving_speed = fitfile.conversions.mps_to_mph(summary_dto.get('averageMovingSpeed'))
-        max_speed = fitfile.conversions.mps_to_mph(summary_dto.get('maxSpeed'))
+        avg_speed_obj = self._get_field_obj(summary_dto, 'averageSpeed', fitfile.Speed.from_mps)
+        avg_moving_speed_obj = self._get_field_obj(summary_dto, 'averageMovingSpeed', fitfile.Speed.from_mps)
+        max_speed_obj = self._get_field_obj(summary_dto, 'maxSpeed', fitfile.Speed.from_mps)
+        avg_speed = avg_speed_obj.kph_or_mph(self.measurement_system) if avg_speed_obj is not None else None
+        avg_moving_speed = avg_moving_speed_obj.kph_or_mph(self.measurement_system) if avg_moving_speed_obj is not None else None
+        max_speed = max_speed_obj.kph_or_mph(self.measurement_system) if max_speed_obj is not None else None
         run = {
             'activity_id'       : activity_id,
             'avg_pace'          : fitfile.conversions.perhour_speed_to_pace(avg_speed),

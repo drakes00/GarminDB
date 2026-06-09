@@ -31,14 +31,16 @@ class GarminConnectConfigManager(JsonConfig):
     def __init__(self, config_dir=None):
         """Return a new GarminConnectConfigManager instance."""
         self.enabled_statistics = None
-        self.config_dir = config_dir or self.__create_dir_if_needed(self.homedir + os.sep + '.GarminDb')
+        self.config_dir = config_dir or "."
         config_file = self.config_dir + os.sep + 'GarminConnectConfig.json'
         try:
             super().__init__(config_file)
         except Exception as e:
             print(str(e))
-            print(f"Missing or bad config: copy GarminConnectConfig.json.example from {os.path.dirname(os.path.abspath(__file__))} to {config_file} and edit it to "
-                  "add your Garmin Connect username and password.")
+            print(
+                f"Missing or bad config: copy GarminConnectConfig.json.example from {os.path.dirname(os.path.abspath(__file__))} to {config_file} and edit it to "
+                "add your Garmin Connect username and password."
+            )
             sys.exit(-1)
 
     def get_node_value(self, node, leaf):
@@ -86,7 +88,7 @@ class GarminConnectConfigManager(JsonConfig):
         """Return the database configuration."""
         db_type = self.get_db_type()
         db_params = {
-            'db_type' : db_type
+            'db_type': db_type
         }
         if db_type == 'sqlite':
             db_params['db_path'] = self.get_db_dir(test_db)
@@ -172,7 +174,9 @@ class GarminConnectConfigManager(JsonConfig):
                     return password.decode(encoding="utf-8").rstrip()
             except Exception:
                 pass
-            raise ConfigException(f'Secure password was specified but no "Internet Password" entry was found in the Login Keychain for https:////{domain}')
+            raise ConfigException(
+                f'Secure password was specified but no "Internet Password" entry was found in the Login Keychain for https:////{domain}'
+            )
 
     def get_password_from_file(self):
         """Read the Garmin Connect password from a file."""
@@ -262,8 +266,18 @@ class GarminConnectConfigManager(JsonConfig):
     def enabled_stats(self):
         """Return all enabled statistics as a list of string names."""
         if not self.enabled_statistics:
-            json_enabled_stats_dict = self.config.get('enabled_stats', {stat_name: True for stat_name in list(Statistics)})
-            self.enabled_statistics = [Statistics.from_string(stat_name) for stat_name, stat_enabled in json_enabled_stats_dict.items() if stat_enabled]
+            json_enabled_stats_dict = self.config.get(
+                'enabled_stats',
+                {
+                    stat_name: True
+                    for stat_name in list(Statistics)
+                }
+            )
+            self.enabled_statistics = [
+                Statistics.from_string(stat_name)
+                for stat_name, stat_enabled in json_enabled_stats_dict.items()
+                if stat_enabled
+            ]
         return self.enabled_statistics
 
     def display_activities(self):
